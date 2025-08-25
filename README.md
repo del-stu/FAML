@@ -15,7 +15,7 @@ You know what's hilarious? This README is written in Markdown. THE THING FAML WA
 
 [💬I hate Markdown so much that I created a whole new language💬]
 
-But don't worry! You can [download the FAML version here]([https://github.com/del-stu/FAML/blob/main/README.faml)!
+But don't worry! You can [download the FAML version here](https://github.com/del-stu/FAML/blob/main/README.faml)
 
 ## Quick Start 🚀
 
