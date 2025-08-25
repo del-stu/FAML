@@ -28,7 +28,7 @@ But don't worry! You can [download the FAML version here]([https://github.com/de
 Or you can make a better interpreter.
 
 ### 2. Playing FAML in ours Editor!
-[](https://del-stu.github.io/FAML/faml-edit)
+[faml-edit](https://del-stu.github.io/FAML/faml-edit)
 
 
 ## Syntax Reference (Super simple!) 📖
