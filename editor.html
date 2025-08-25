@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAML-edit</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #c9d1d9;
+            background-color: #0d1117;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        
+        .editor-container, .preview-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 12px;
+            background-color: #161b22;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .editor, .preview {
+            flex: 1;
+            padding: 16px;
+            border: 1px solid #30363d;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            overflow-y: auto;
+            border-radius: 0 0 6px 6px;
+        }
+        
+        #faml-input, #html-output {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            outline: none;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        
+        .preview {
+            font-size: 16px;
+        }
+        
+        .preview h1, .preview h2 {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #21262d;
+            margin-bottom: 16px;
+            margin-top: 24px;
+            color: #f0f6fc;
+        }
+        
+        .preview h1 {
+            font-size: 2em;
+        }
+        
+        .preview h2 {
+            font-size: 1.5em;
+        }
+        
+        .preview h3 {
+            font-size: 1.25em;
+            margin-top: 24px;
+            margin-bottom: 16px;
+            color: #f0f6fc;
+        }
+        
+        .preview p {
+            margin-bottom: 16px;
+        }
+        
+        .preview ul, .preview ol {
+            margin-bottom: 16px;
+            padding-left: 2em;
+            color: #c9d1d9;
+        }
+        
+        .preview li {
+            color: #c9d1d9;
+        }
+        
+        .preview blockquote {
+            padding: 0 1em;
+            color: #8b949e;
+            border-left: 0.25em solid #30363d;
+            margin-bottom: 16px;
+            background-color: #161b22;
+        }
+        
+        /* 重要引用样式 */
+        .preview blockquote.faml-important {
+            color: #6366F1;
+            border-left-color: #6366F1;
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+        
+        .preview code {
+            font-family: monospace;
+            background-color: rgba(110, 118, 129, 0.4);
+            border-radius: 6px;
+            padding: 0.2em 0.4em;
+            font-size: 85%;
+            color: #f0f6fc;
+        }
+        
+        .preview pre {
+            background-color: #161b22;
+            border-radius: 6px;
+            padding: 16px;
+            overflow: auto;
+            margin-bottom: 16px;
+            border: 1px solid #30363d;
+        }
+        
+        .preview pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: #f0f6fc;
+        }
+        
+        .preview table {
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            width: 100%;
+            display: block;
+            overflow: auto;
+        }
+        
+        .preview table th, .preview table td {
+            padding: 6px 13px;
+            border: 1px solid #30363d;
+        }
+        
+        .preview table tr {
+            background-color: #0d1117;
+            border-top: 1px solid #21262d;
+        }
+        
+        .preview table tr:nth-child(2n) {
+            background-color: #161b22;
+        }
+        
+        .preview table th {
+            background-color: #161b22;
+            color: #f0f6fc;
+        }
+        
+        .preview img {
+            max-width: 100%;
+            box-sizing: content-box;
+            background-color: #0d1117;
+        }
+        
+        .preview hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #21262d;
+            border: 0;
+        }
+        
+        .preview a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        
+        .preview a:hover {
+            text-decoration: underline;
+        }
+        
+        .preview .task-list-item {
+            list-style-type: none;
+        }
+        
+        .preview .task-list-item-checkbox {
+            margin: 0 0.2em 0.25em -1.6em;
+            vertical-align: middle;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+        
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #58a6ff;
+            font-size: 28px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1 class="title">FAML EDIT</h1>
+    
+    <div class="container">
+        <div class="editor-container">
+            <div class="header">FAML Input</div>
+            <div class="editor">
+                <textarea id="faml-input" placeholder="FAML here..."></textarea>
+            </div>
+        </div>
+        <div class="preview-container">
+            <div class="header">Preview</div>
+            <div class="preview" id="preview"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="editor-container">
+            <div class="header">HTML Output</div>
+            <div class="editor">
+                <textarea id="html-output" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 FAML 解释器 -->
+    <script src="faml-interpreter-con/0.1.0/fic.js"></script>
+    <script>
+        // 获取 DOM 元素
+        const famlInput = document.getElementById('faml-input');
+        const htmlOutput = document.getElementById('html-output');
+        const preview = document.getElementById('preview');
+        
+        // 创建 FAML 解释器实例
+        const faml = new FAMLInterpreter();
+        
+        // FAML 示例内容
+        const famlExample = `[❗] Input text here`;
+
+        // 设置初始内容
+        famlInput.value = famlExample;
+        
+        // 实时转换 - FAML
+        famlInput.addEventListener('input', function() {
+            const convertedText = faml.convert(this.value);
+            htmlOutput.value = convertedText;
+            preview.innerHTML = convertedText;
+        });
+        
+        // 触发一次 FAML 转换以显示初始内容
+        famlInput.dispatchEvent(new Event('input'));
+    </script>
+</body>
+</html>
